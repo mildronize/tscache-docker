@@ -1,0 +1,11 @@
+version: '2'
+services:
+    hbase:
+        build: hbase/
+        # image: hbase
+        # volumes:
+            # - /home/mildronize/tmp/hbase:/data/hbase
+        contianer_name: hbase
+        environment:
+            TIMEZONE: Asia/Bangkok
+
