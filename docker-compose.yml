@@ -2,10 +2,13 @@ version: '2'
 services:
     hbase:
         build: hbase/
+        ports:
+            - "16010:16010"
+            - "2181:2181"
         # image: hbase
         # volumes:
             # - /home/mildronize/tmp/hbase:/data/hbase
-        contianer_name: hbase
+        container_name: hbase
         environment:
             TIMEZONE: Asia/Bangkok
 

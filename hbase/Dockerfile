@@ -23,9 +23,9 @@ ADD hbase-site.xml /opt/hbase/conf/
 ADD start_hbase.sh /opt/bin/
 
 ####  Publish ports
-EXPOSE 16010:16010
+EXPOSE 16010
 # For Zookeeper
-EXPOSE 2181:2181
+EXPOSE 2181
 
 VOLUME ["/data/hbase"]
 WORKDIR /opt/hbase/bin
