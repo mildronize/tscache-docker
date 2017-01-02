@@ -34,5 +34,7 @@ RUN \
     rm -rf /var/lib/apt/lists/*
 
 
+ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
+
 # define default command
 CMD ["java"]
