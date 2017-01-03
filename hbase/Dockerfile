@@ -1,5 +1,7 @@
-FROM oracle-jdk8
+# Local oracle jdk 8 build
+FROM java:oraclejdk-8
 # FROM java:openjdk-8
+
 MAINTAINER Thada Wangthammang <mildronize@gmail.com>
 
 ENV TIMEZONE Asia/Bangkok

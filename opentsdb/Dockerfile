@@ -8,7 +8,7 @@ RUN cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
 # install GNUplot and clean cache
 RUN \
     apt-get update && \
-    apt-get install -y gnuplot unzip && \
+    apt-get install -y gnuplot unzip autoconf make python && \
     apt-get clean  && \
     rm -rf /var/lib/apt/lists/*
 
