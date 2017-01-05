@@ -12,7 +12,8 @@ function check_prerequisite {
 
 check_prerequisite telnet
 
-TELNETCOUNT=`sleep 5 | telnet $server $port | grep -v "Connection refused" | grep "Connected to" | grep -v grep | wc -l`
+TELNETCOUNT=`sleep 30 | telnet ${server} ${port} | grep -v "Connection refused" | grep "Connected to" | grep -v grep | wc -l`
+
 
 if [ $TELNETCOUNT -eq 1 ] ; then
     # Telnet up!
@@ -20,5 +21,7 @@ if [ $TELNETCOUNT -eq 1 ] ; then
     echo "Can connect via Telnet at ${server}:${port}"
 else
     echo "Cannot connect to Zookeeper at ${server}:${port}"
-    exit 1
+    # exit 1
+    ping -w 4 ${server}
+    sleep infinity
 fi

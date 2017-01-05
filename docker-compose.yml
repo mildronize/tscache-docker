@@ -1,14 +1,27 @@
 version: '2'
 services:
-    hbase:
-        build: hbase/
+    db:
+        # build: hbase/
+        image: hbase
         ports:
             - "16010:16010"
             - "2181:2181"
-        # image: hbase
         # volumes:
             # - /home/mildronize/tmp/hbase:/data/hbase
         container_name: hbase
         environment:
             TIMEZONE: Asia/Bangkok
+
+    opentsdb:
+        image: opentsdb
+        depends_on:
+            - db
+        ports:
+            - "4242:4242"
+        container_name: opentsdb
+        environment:
+            TIMEZONE: Asia/Bangkok
+            ZOOKEEPER_HOST: db
+            ZOOKEEPER_PORT: 2181
+
 
