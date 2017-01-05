@@ -1,4 +1,4 @@
-FROM oracle-jdk8
+FROM java:oraclejdk-8
 # FROM java:openjdk-8
 MAINTAINER Thada Wangthammang <mildronize@gmail.com>
 
@@ -8,7 +8,7 @@ RUN cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
 # install GNUplot and clean cache
 RUN \
     apt-get update && \
-    apt-get install -y gnuplot unzip autoconf make python && \
+    apt-get install -y gnuplot unzip autoconf make python telnet && \
     apt-get clean  && \
     rm -rf /var/lib/apt/lists/*
 
@@ -25,6 +25,8 @@ RUN ./build.sh
 
 ADD start_opentsdb.sh /opt/bin/
 ADD create_tsdb_tables.sh /opt/bin/
+ADD wait_for_hbase.sh /opt/bin/
+RUN chmod 755 /opt/bin/*.sh
 
 RUN for i in /opt/bin/start_opentsdb.sh /opt/bin/create_tsdb_tables.sh; \
     do \
@@ -35,4 +37,4 @@ RUN for i in /opt/bin/start_opentsdb.sh /opt/bin/create_tsdb_tables.sh; \
 EXPOSE 4242
 
 WORKDIR /opt/opentsdb/opentsdb-${TSDB_VERSION}/build
-
+CMD ["/opt/bin/wait_for_hbase.sh"]
