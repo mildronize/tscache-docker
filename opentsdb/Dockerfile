@@ -37,4 +37,7 @@ RUN for i in /opt/bin/start_opentsdb.sh /opt/bin/create_tsdb_tables.sh; \
 EXPOSE 4242
 
 WORKDIR /opt/opentsdb/opentsdb-${TSDB_VERSION}/build
+
+ADD opentsdb.conf /opt/opentsdb/
+
 CMD ["/opt/bin/wait_for_hbase.sh"]
