@@ -2,8 +2,6 @@ FROM java:oraclejdk-8
 # FROM java:openjdk-8
 MAINTAINER Thada Wangthammang <mildronize@gmail.com>
 
-ENV TIMEZONE Asia/Bangkok
-RUN cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
 
 # install GNUplot and clean cache
 RUN \
@@ -39,5 +37,6 @@ EXPOSE 4242
 WORKDIR /opt/opentsdb/opentsdb-${TSDB_VERSION}/build
 
 ADD opentsdb.conf /opt/opentsdb/
+
 
 CMD ["/opt/bin/wait_for_hbase.sh"]

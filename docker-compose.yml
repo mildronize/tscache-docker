@@ -2,7 +2,7 @@ version: '2'
 services:
     db:
         # build: hbase/
-        image: hbase
+        image: hbase-for-opentsdb
         ports:
             - "16010:16010"
             - "2181:2181"

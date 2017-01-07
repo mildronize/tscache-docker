@@ -4,8 +4,6 @@ FROM java:oraclejdk-8
 
 MAINTAINER Thada Wangthammang <mildronize@gmail.com>
 
-ENV TIMEZONE Asia/Bangkok
-RUN cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
 # Install HBase
 ENV HBASE_VERSION 1.2.4
 
@@ -31,6 +29,7 @@ EXPOSE 2181
 
 VOLUME ["/data/hbase"]
 WORKDIR /opt/hbase/bin
+
 
 CMD ["/opt/bin/start_hbase.sh"]
 
