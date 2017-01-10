@@ -16,3 +16,5 @@ ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime  && echo ${TIMEZONE} > /e
 
 echo "starting opentsdb"
 /opt/opentsdb/opentsdb-${TSDB_VERSION}/build/tsdb tsd --port=4242 --staticroot=/opt/opentsdb/opentsdb-${TSDB_VERSION}/build/staticroot --cachedir=/tmp --auto-metric
+
+# sleep infinity

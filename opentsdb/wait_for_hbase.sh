@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 server=$ZOOKEEPER_HOST
-port=$ZOOKEEPER_PORT
 delay=2
 command="/opt/bin/start_opentsdb.sh"
 
@@ -16,20 +15,20 @@ check_prerequisite telnet
 # Start main script
 for i in /opt/opentsdb/opentsdb.conf; \
     do \
-        sed -i "s#::ZOOKEEPER_HOST::#$server:$port#g;" $i; \
+        sed -i "s#::ZOOKEEPER_HOST::#$server#g;" $i; \
     done
 
 sleep 5
 
 while true; do
-    TELNETCOUNT=`telnet ${server} ${port} | grep -v "Connection refused" | grep "Connected to" | grep -v grep | wc -l`
+    TELNETCOUNT=`telnet ${server} | grep -v "Connection refused" | grep "Connected to" | grep -v grep | wc -l`
 
     if [ $TELNETCOUNT -eq 1 ] ; then
         # Telnet up!
-        echo "Can connect via Telnet at ${server}:${port}"
+        echo "Can connect via Telnet at ${server}"
         break
     else
-        echo "Cannot connect to Zookeeper at ${server}:${port}"
+        echo "Cannot connect to Zookeeper at ${server}"
     fi
     echo "Sleep ${delay}"
     sleep ${delay}
