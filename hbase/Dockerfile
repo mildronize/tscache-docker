@@ -22,17 +22,20 @@ RUN \
     rm hbase-${HBASE_VERSION}.bin.tar.gz
 
 ADD hbase-site.xml ${HBASE_HOME}/conf/
-ADD start_hbase.sh /opt/bin/
+ADD entrypoint.sh /opt/bin/
 
 ####  Publish ports
-EXPOSE 16010
-# For Zookeeper
-EXPOSE 2181
+# Zookeeper 2181
+# Stargate  8080  / 8085
+# Thrift    9090  / 9095
+# HMaster   16000 / 16010
+# RS        16201 / 16301
+EXPOSE 2181 8080 8085 9090 9095 16000 16010 16201 16301
 
 
 WORKDIR ${HBASE_HOME}
 VOLUME ["${HBASE_DATA}"]
 
-CMD ["/opt/bin/start_hbase.sh"]
+CMD ["/opt/bin/entrypoint.ssh"]
 
 

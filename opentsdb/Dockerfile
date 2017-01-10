@@ -23,7 +23,7 @@ RUN ./build.sh
 
 ADD start_opentsdb.sh /opt/bin/
 ADD create_tsdb_tables.sh /opt/bin/
-ADD wait_for_hbase.sh /opt/bin/
+ADD entrypoint.sh /opt/bin/
 RUN chmod 755 /opt/bin/*.sh
 
 RUN for i in /opt/bin/start_opentsdb.sh /opt/bin/create_tsdb_tables.sh; \
@@ -39,4 +39,4 @@ WORKDIR /opt/opentsdb/opentsdb-${TSDB_VERSION}/build
 ADD opentsdb.conf /opt/opentsdb/
 
 
-CMD ["/opt/bin/wait_for_hbase.sh"]
+CMD ["/opt/bin/entrypoint.sh"]

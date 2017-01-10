@@ -20,9 +20,9 @@ RUN mkdir -p /opt/bin
 RUN cp /tmp/opentsdb-${TSDB_VERSION}/src/create_table.sh /opt/bin
 
 
-ADD prepare_and_start_hbase.sh /opt/bin
+ADD entrypoint.sh /opt/bin
 RUN chmod 755 /opt/bin/*.sh
 
 ENV HBASE_HOME /opt/hbase
 
-CMD ["/opt/bin/prepare_and_start_hbase.sh"]
+CMD ["/opt/bin/entrypoint.sh"]

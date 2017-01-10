@@ -4,16 +4,17 @@ services:
     # build: hbase/
     image: hbase-for-opentsdb
     ports:
-        - "16010:16010"
-        - "2181:2181"
+      - 2181:2181
+      - 16000:16000
+      - 16010:16010
+      - 16201:16201
+      - 16301:16301
     # volumes:
         # - /home/mildronize/tmp/hbase:/data/hbase
     container_name: hbase
-    hostname: hbase.vnet
-    networks: ["vnet"]
     environment:
         TIMEZONE: Asia/Bangkok
-        ZOOKEEPER_HOST: hbase.vnet:2181
+        ZOOKEEPER_HOST: hbase:2181
 
   opentsdb:
     image: opentsdb
@@ -22,15 +23,8 @@ services:
     ports:
         - "4242:4242"
     container_name: opentsdb
-    hostname: opentsdb.vnet
-    networks: ["vnet"]
     environment:
         TIMEZONE: Asia/Bangkok
-        ZOOKEEPER_HOST: hbase.vnet:2181
+        ZOOKEEPER_HOST: hbase:2181
     volumes_from:
         - hbase
-
-networks:
-  vnet:
-    external:
-      name: vnet
