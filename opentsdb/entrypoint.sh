@@ -43,5 +43,4 @@ while true; do
 done
 
 sleep 20
-
 ${command}

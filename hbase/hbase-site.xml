@@ -7,7 +7,7 @@
   </property>
   <property>
     <name>hbase.zookeeper.quorum</name>
-    <value>::ZOOKEEPER_HOST::</value>
+    <value>{{ZOOKEEPER_HOST}}</value>
   </property>
 
 </configuration>

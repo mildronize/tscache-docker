@@ -1,8 +1,8 @@
 version: '2'
 services:
-  hbase:
-    # build: hbase/
-    image: hbase-for-opentsdb
+  hbase_standalone:
+    build: hbase/
+    image: hbase:1.2.4
     ports:
       - 2181:2181
       - 16000:16000
@@ -14,17 +14,18 @@ services:
     container_name: hbase
     environment:
         TIMEZONE: Asia/Bangkok
-        ZOOKEEPER_HOST: hbase:2181
+        ZOOKEEPER_HOST: hbase_standalone:2181
 
   opentsdb:
+    build: opentsdb/
     image: opentsdb
     depends_on:
-        - hbase
+        - hbase_standalone
     ports:
         - "4242:4242"
     container_name: opentsdb
     environment:
         TIMEZONE: Asia/Bangkok
-        ZOOKEEPER_HOST: hbase:2181
+        ZOOKEEPER_HOST: hbase_standalone:2181
     volumes_from:
-        - hbase
+        - hbase_standalone
