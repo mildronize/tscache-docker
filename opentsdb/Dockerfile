@@ -26,21 +26,19 @@ RUN wget --no-check-certificate -O v${TSDB_VERSION}.zip https://github.com/OpenT
 WORKDIR ${TSDB_HOME}/opentsdb-${TSDB_VERSION}
 RUN ./build.sh
 
+ADD opentsdb.conf ${TSDB_HOME}
+
 ADD start_opentsdb.sh /opt/bin/
 ADD create_tsdb_tables.sh /opt/bin/
 ADD entrypoint.sh /opt/bin/
 RUN chmod 755 /opt/bin/*.sh
 
-RUN for i in /opt/bin/start_opentsdb.sh /opt/bin/create_tsdb_tables.sh; \
-    do \
-        sed -i "s#{{TSDB_VERSION}}#$TSDB_VERSION#g;" $i; \
-    done
+RUN sed -i "s#{{TSDB_VERSION}}#$TSDB_VERSION#g;" /opt/bin/start_opentsdb.sh && \
+    sed -i "s#{{TSDB_VERSION}}#$TSDB_VERSION#g;" /opt/bin/create_tsdb_tables.sh
 
 # OpenTSDB GUI
 EXPOSE 4242
 
 WORKDIR ${TSDB_HOME}
-
-ADD opentsdb.conf ${TSDB_HOME}
 
 CMD ["/opt/bin/entrypoint.sh"]

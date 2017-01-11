@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Replace config
-sed -i "s#{{ZOOKEEPER_HOST}}#$ZOOKEEPER_HOST#g;" ${HBASE_HOME}/conf/hbase-site.xml
+sed -i "s#{{HBASE_ZOOKEEPER_QUORUM}}#$HBASE_ZOOKEEPER_QUORUM#g;" ${HBASE_HOME}/conf/hbase-site.xml
 
 # /opt/hbase/bin/hbase master start
 /opt/hbase/bin/start-hbase.sh

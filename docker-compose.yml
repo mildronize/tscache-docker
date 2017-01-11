@@ -14,7 +14,7 @@ services:
     container_name: hbase
     environment:
         TIMEZONE: Asia/Bangkok
-        ZOOKEEPER_HOST: hbase_standalone:2181
+        HBASE_ZOOKEEPER_QUORUM: hbase_standalone:2181
 
   opentsdb:
     build: opentsdb/
@@ -22,10 +22,10 @@ services:
     depends_on:
         - hbase_standalone
     ports:
-        - "4242:4242"
+        - 4242:4242
     container_name: opentsdb
     environment:
         TIMEZONE: Asia/Bangkok
-        ZOOKEEPER_HOST: hbase_standalone:2181
+        HBASE_ZOOKEEPER_QUORUM: hbase_standalone:2181
     volumes_from:
         - hbase_standalone
