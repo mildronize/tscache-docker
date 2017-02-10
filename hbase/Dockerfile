@@ -9,8 +9,7 @@ ENV HBASE_HOME /opt/hbase
 ENV HBASE_DATA /data/hbase
 ENV HBASE_VERSION 1.2.4
 
-RUN mkdir -p /data/hbase
-RUN mkdir -p /opt/downloads
+RUN mkdir -p /data/hbase /opt/downloads
 WORKDIR /opt/downloads
 RUN \
     # wget -O hbase-${HBASE_VERSION}.bin.tar.gz http://www-us.apache.org/dist/hbase/${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz && \
@@ -22,17 +21,22 @@ RUN \
     rm hbase-${HBASE_VERSION}.bin.tar.gz
 
 ADD hbase-site.xml ${HBASE_HOME}/conf/
-ADD start_hbase.sh /opt/bin/
+ADD entrypoint.sh /opt/bin/
+RUN chmod 755 /opt/bin/*.sh
+
 
 ####  Publish ports
-EXPOSE 16010
-# For Zookeeper
-EXPOSE 2181
+# Zookeeper 2181
+# Stargate  8080  / 8085
+# Thrift    9090  / 9095
+# HMaster   16000 / 16010
+# RS        16201 / 16301
+EXPOSE 2181 8080 8085 9090 9095 16000 16010 16201 16301
 
 
 WORKDIR ${HBASE_HOME}
-VOLUME ["${HBASE_DATA}"]
+VOLUME ["${HBASE_HOME}"]
 
-CMD ["/opt/bin/start_hbase.sh"]
+CMD ["/opt/bin/entrypoint.sh"]
 
 
