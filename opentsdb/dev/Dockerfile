@@ -13,26 +13,24 @@ RUN mkdir -p ${TSDB_HOME} ${HBASE_HOME}
 
 # install GNUplot and clean cache
 RUN apt-get update && apt-get install -y gnuplot unzip autoconf make python telnet \
-        git zsh python-watchdog locales \
+        git zsh python-watchdog locales vim \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # install my dev env
 ENV DOTFILES_PATH       /root/.dotfiles
 ENV DOTFILES_REMOTE     true
-RUN set -x && \
-    git clone https://github.com/mildronize/dotfiles ${DOTFILES_PATH} && \
-    cd ${DOTFILES_PATH} && \
-    git checkout develop && \
-    make zsh
-# fix locale
-RUN rm -f /etc/default/locale \
-    && echo -e 'LANG="en_US.UTF-8"\nLANGUAGE="en_US:en"\n' > /etc/default/locale \
-    && dpkg-reconfigure --frontend=noninteractive locales
+ENV SHELL               /usr/bin/zsh
+RUN set -x \
+    # fix locale following: http://unix.stackexchange.com/questions/246846/cant-generate-en-us-utf-8-locale
+    && sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen && locale-gen \
+    && git clone https://github.com/mildronize/dotfiles ${DOTFILES_PATH} \
+    && cd ${DOTFILES_PATH} \
+    && git checkout develop \
+    && make zsh
 
-
-ADD entrypoint.sh /opt/bin/
-RUN chmod 755 /opt/bin/entrypoint.sh
+ADD ./entrypoint.sh /
+RUN chmod 755 /entrypoint.sh
 
 WORKDIR ${TSDB_HOME}
-CMD ["/opt/bin/entrypoint.sh"]
+CMD ["/entrypoint.sh"]
