@@ -1,18 +1,16 @@
 #!/bin/bash
-export TSDB_VERSION="::TSDB_VERSION::"
+export TSDB_VERSION="{{TSDB_VERSION}}"
 # echo "Sleeping for 30 seconds to give HBase time to warm up"
 # sleep 30 
 
 # Setup timezone
 ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime  && echo ${TIMEZONE} > /etc/timezone
-# timedatectl set-timezone ${TIMZONE}
-# dpkg-reconfigure -f noninteractive tzdata
 
-# if [ ! -e /opt/opentsdb_tables_created.txt ]; then
-	# echo "creating tsdb tables"
-	# bash /opt/bin/create_tsdb_tables.sh
-	# echo "created tsdb tables"
-# fi
+if [ ! -e /opt/opentsdb_tables_created.txt ]; then
+	echo "creating tsdb tables"
+	bash /opt/bin/create_tsdb_tables.sh
+	echo "created tsdb tables"
+fi
 
 echo "starting opentsdb"
 /opt/opentsdb/opentsdb-${TSDB_VERSION}/build/tsdb tsd --port=4242 --staticroot=/opt/opentsdb/opentsdb-${TSDB_VERSION}/build/staticroot --cachedir=/tmp --auto-metric
