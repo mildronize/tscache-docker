@@ -1,36 +1,50 @@
 version: '2'
 services:
-  hbase:
-    # build: hbase/
-    image: hbase-for-opentsdb
+  hbase_standalone:
+    build: hbase/
+    image: hbase:1.2.4
     ports:
-        - "16010:16010"
-        - "2181:2181"
+      - 2181:2181
+      - 16000:16000
+      - 16010:16010
+      - 16201:16201
+      - 16301:16301
     # volumes:
         # - /home/mildronize/tmp/hbase:/data/hbase
     container_name: hbase
-    hostname: hbase.vnet
-    networks: ["vnet"]
     environment:
         TIMEZONE: Asia/Bangkok
-        ZOOKEEPER_HOST: hbase.vnet:2181
+        HBASE_ZOOKEEPER_QUORUM: hbase_standalone:2181
 
-  opentsdb:
+  tsdb:
+    build: opentsdb/
     image: opentsdb
     depends_on:
-        - hbase
+        - hbase_standalone
     ports:
-        - "4242:4242"
-    container_name: opentsdb
-    hostname: opentsdb.vnet
-    networks: ["vnet"]
+        - 4242:4242
+    container_name: tsdb
     environment:
         TIMEZONE: Asia/Bangkok
-        ZOOKEEPER_HOST: hbase.vnet:2181
+        HBASE_ZOOKEEPER_QUORUM: hbase_standalone:2181
     volumes_from:
-        - hbase
+        - hbase_standalone
 
-networks:
-  vnet:
-    external:
-      name: vnet
+  tsdb-dev:
+    build: ./opentsdb/dev
+    image: opentsdb:2.3-dev
+    depends_on:
+        - hbase_standalone
+    ports:
+        - 4242:4242
+    expose:
+        - 4242
+    container_name: tsdb
+    environment:
+        TIMEZONE: Asia/Bangkok
+        HBASE_ZOOKEEPER_QUORUM: hbase_standalone:2181
+        HBASE_HOME: /opt/hbase
+    volumes_from:
+        - hbase_standalone
+    volumes:
+        - ./opentsdb/dev/coding:/opt/opentsdb
