@@ -3,8 +3,6 @@ export TSDB_VERSION="{{TSDB_VERSION}}"
 # echo "Sleeping for 30 seconds to give HBase time to warm up"
 # sleep 30 
 
-# Setup timezone
-ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime  && echo ${TIMEZONE} > /etc/timezone
 
 if [ ! -e /opt/opentsdb_tables_created.txt ]; then
 	echo "creating tsdb tables"

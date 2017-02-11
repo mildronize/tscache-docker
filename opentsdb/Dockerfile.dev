@@ -5,7 +5,7 @@ MAINTAINER Thada Wangthammang <mildronize@gmail.com>
 ENV HBASE_HOME      /opt/hbase
 
 ENV TSDB_VERSION    2.3.0
-ENV TSDB_HOME       /opt/opentsdb/
+ENV TSDB_HOME       /opt/opentsdb
 
 ENV PATH            $PATH:${HBASE_HOME}/sbin:${HBASE_HOME}/bin:${TSDB_HOME}/opentsdb-${TSDB_VERSION}/build
 
@@ -13,7 +13,10 @@ RUN mkdir -p ${TSDB_HOME} ${HBASE_HOME}
 
 # install GNUplot and clean cache
 RUN apt-get update && apt-get install -y gnuplot unzip autoconf make python telnet \
-        git zsh python-watchdog locales vim \
+        # For python-watchdog
+        python-setuptools python-watchdog \
+        # For my dev env
+        git zsh locales vim \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -29,8 +32,13 @@ RUN set -x \
     && git checkout develop \
     && make zsh
 
-ADD ./entrypoint.sh /
-RUN chmod 755 /entrypoint.sh
+ADD entrypoint.dev.sh /entrypoint.sh
+ADD entrypoint.sh /preparing_opentsdb.sh
+RUN chmod 755 /entrypoint.sh /preparing_opentsdb.sh
 
-WORKDIR ${TSDB_HOME}
+ADD opentsdb.conf ${TSDB_HOME}
+
+ENV TSDB_DEV_PATH    /opt/opentsdb-dev
+
+WORKDIR ${TSDB_DEV_PATH}
 CMD ["/entrypoint.sh"]

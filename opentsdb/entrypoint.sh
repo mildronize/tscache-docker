@@ -9,7 +9,11 @@ set -eo pipefail
 env_opentsdb_home="$TSDB_HOME"
 env_zookeeper_host="$HBASE_ZOOKEEPER_QUORUM"
 
-command="/opt/bin/start_opentsdb.sh"
+# Input command to be run from arg
+command="$1"
+
+# Setup timezone
+ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime  && echo ${TIMEZONE} > /etc/timezone
 
 # Define functions
 check_prerequisite() {
@@ -57,6 +61,9 @@ zookeeper_host=${zookeeper_server[0]}
 zookeeper_port=${zookeeper_server[1]}
 
 # Start main script
+# --------------------------------
+
+# Replacing configuration with enviroment variables
 sed -i "s#{{HBASE_ZOOKEEPER_QUORUM}}#$env_zookeeper_host#g;" $env_opentsdb_home/opentsdb.conf
 
 # Waiting for zookeeper ready!

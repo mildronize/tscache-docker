@@ -1,6 +1,6 @@
 # Local oracle jdk 8 build
-FROM java:oraclejdk-8
-# FROM java:openjdk-8
+# FROM java:oraclejdk-8
+FROM openjdk:8
 
 MAINTAINER Thada Wangthammang <mildronize@gmail.com>
 
@@ -21,8 +21,8 @@ RUN \
     rm hbase-${HBASE_VERSION}.bin.tar.gz
 
 ADD hbase-site.xml ${HBASE_HOME}/conf/
-ADD entrypoint.sh /opt/bin/
-RUN chmod 755 /opt/bin/*.sh
+ADD entrypoint.sh /
+RUN chmod 755 /entrypoint.sh
 
 
 ####  Publish ports
@@ -37,6 +37,6 @@ EXPOSE 2181 8080 8085 9090 9095 16000 16010 16201 16301
 WORKDIR ${HBASE_HOME}
 VOLUME ["${HBASE_HOME}"]
 
-CMD ["/opt/bin/entrypoint.sh"]
+CMD ["/entrypoint.sh"]
 
 

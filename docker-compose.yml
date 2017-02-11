@@ -17,7 +17,7 @@ services:
         HBASE_ZOOKEEPER_QUORUM: hbase_standalone:2181
 
   tsdb:
-    build: opentsdb/
+    build: ./opentsdb
     image: opentsdb
     depends_on:
         - hbase_standalone
@@ -31,7 +31,9 @@ services:
         - hbase_standalone
 
   tsdb-dev:
-    build: ./opentsdb/dev
+    build:
+      context: ./opentsdb
+      dockerfile: Dockerfile.dev
     image: opentsdb:2.3-dev
     depends_on:
         - hbase_standalone
@@ -47,4 +49,4 @@ services:
     volumes_from:
         - hbase_standalone
     volumes:
-        - ./opentsdb/dev/coding:/opt/opentsdb
+        - ./opentsdb/dev/coding:/opt/opentsdb-dev

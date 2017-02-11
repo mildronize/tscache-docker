@@ -1,5 +1,5 @@
-FROM java:oraclejdk-8
-# FROM java:openjdk-8
+# FROM java:oraclejdk-8
+FROM openjdk:8
 MAINTAINER Thada Wangthammang <mildronize@gmail.com>
 
 ENV HBASE_HOME      /opt/hbase
@@ -30,8 +30,8 @@ ADD opentsdb.conf ${TSDB_HOME}
 
 ADD start_opentsdb.sh /opt/bin/
 ADD create_tsdb_tables.sh /opt/bin/
-ADD entrypoint.sh /opt/bin/
-RUN chmod 755 /opt/bin/*.sh
+ADD entrypoint.sh /
+RUN chmod 755 /entrypoint.sh /opt/bin/start_opentsdb.sh /opt/bin/create_tsdb_tables.sh
 
 RUN sed -i "s#{{TSDB_VERSION}}#$TSDB_VERSION#g;" /opt/bin/start_opentsdb.sh && \
     sed -i "s#{{TSDB_VERSION}}#$TSDB_VERSION#g;" /opt/bin/create_tsdb_tables.sh
@@ -41,4 +41,4 @@ EXPOSE 4242
 
 WORKDIR ${TSDB_HOME}
 
-CMD ["/opt/bin/entrypoint.sh"]
+CMD ["/entrypoint.sh", "/opt/bin/start_opentsdb.sh"]
