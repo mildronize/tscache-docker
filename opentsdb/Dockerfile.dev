@@ -2,11 +2,20 @@
 FROM openjdk:8
 MAINTAINER Thada Wangthammang <mildronize@gmail.com>
 
-ENV HBASE_HOME      /opt/hbase
+# Dev env
+ENV DEV_HOME            /home/dev
 
+ARG user=dev
+ARG group=dev
+ARG uid=1000
+ARG gid=1000
+
+
+ENV TSDB_DEV_PATH    ${DEV_HOME}/opentsdb-dev
+
+ENV HBASE_HOME      /opt/hbase
 ENV TSDB_VERSION    2.3.0
 ENV TSDB_HOME       /opt/opentsdb
-
 ENV PATH            $PATH:${HBASE_HOME}/sbin:${HBASE_HOME}/bin:${TSDB_HOME}/opentsdb-${TSDB_VERSION}/build
 
 RUN mkdir -p ${TSDB_HOME} ${HBASE_HOME}
@@ -20,17 +29,26 @@ RUN apt-get update && apt-get install -y gnuplot unzip autoconf make python teln
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+
 # install my dev env
-ENV DOTFILES_PATH       /root/.dotfiles
 ENV DOTFILES_REMOTE     true
 ENV SHELL               /usr/bin/zsh
+
+# Add user `dev`
+# If you bind mount a volume from the host or a data container,
+# ensure you use the same uid
+RUN groupadd -g ${gid} ${group} \
+    && useradd -d "$DEV_HOME" -u ${uid} -g ${gid} -m -s ${SHELL} ${user}
+
 RUN set -x \
     # fix locale following: http://unix.stackexchange.com/questions/246846/cant-generate-en-us-utf-8-locale
     && sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen && locale-gen \
-    && git clone https://github.com/mildronize/dotfiles ${DOTFILES_PATH} \
-    && cd ${DOTFILES_PATH} \
+    && git clone https://github.com/mildronize/dotfiles ${DEV_HOME}/.dotfiles \
+    && cd ${DEV_HOME}/.dotfiles \
     && git checkout develop \
-    && make zsh
+    && HOME=${DEV_HOME} make zsh \
+    && chown -R ${user}:${group} .
+
 
 ADD entrypoint.dev.sh /entrypoint.sh
 ADD entrypoint.sh /preparing_opentsdb.sh
@@ -38,7 +56,5 @@ RUN chmod 755 /entrypoint.sh /preparing_opentsdb.sh
 
 ADD opentsdb.conf ${TSDB_HOME}
 
-ENV TSDB_DEV_PATH    /opt/opentsdb-dev
-
-WORKDIR ${TSDB_DEV_PATH}
+WORKDIR ${DEV_HOME}
 CMD ["/entrypoint.sh"]
