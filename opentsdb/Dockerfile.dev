@@ -24,6 +24,8 @@ RUN mkdir -p ${TSDB_HOME} ${HBASE_HOME}
 RUN apt-get update && apt-get install -y gnuplot unzip autoconf make python telnet \
         # For python-watchdog
         python-setuptools python-watchdog \
+        # dev tools \
+        maven \
         # For my dev env
         git zsh locales vim \
     && apt-get clean \

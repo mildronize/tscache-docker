@@ -34,9 +34,6 @@ services:
     build:
       context: ./opentsdb
       dockerfile: Dockerfile.dev
-      args:
-        uid: ${uid}
-        gid: ${gid}
 
     image: opentsdb:2.3-dev
     depends_on:
@@ -52,5 +49,15 @@ services:
         HBASE_HOME: /opt/hbase
     volumes_from:
         - hbase_standalone
-    volumes:
-        - ./opentsdb/dev:/home/dev/opentsdb-dev
+        - unison
+    # volumes:
+    #     - ./opentsdb/dev:/home/dev/opentsdb-dev
+
+  unison:  
+      image: leighmcculloch/unison:latest  
+      environment:  
+          - UNISON_WORKING_DIR=/home/dev/opentsdb-dev/opentsdb
+      volumes:
+          - /home/dev/opentsdb-dev/opentsdb
+      ports:  
+          - "5000:5000"
