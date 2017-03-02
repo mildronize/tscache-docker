@@ -35,4 +35,4 @@ EXPOSE 4242
 
 WORKDIR ${TSDB_HOME}/opentsdb-${TSDB_VERSION}
 
-CMD ["/entrypoint.sh", "/opt/bin/start_opentsdb.sh"]
+CMD ["/entrypoint.sh", "cd ${TSDB_HOME}/opentsdb-${TSDB_VERSION} && ./build.sh && /opt/bin/start_opentsdb.sh"]
