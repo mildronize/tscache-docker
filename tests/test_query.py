@@ -25,7 +25,7 @@ result = r.json()
 expected = 2184
 print("Expected: ", expected)
 print("Found:    ", len(result[0]["dps"])
-if( len(result[0]["dps"]) != expected ) 
+if len(result[0]["dps"]) != expected:
     exit(1)
 
 exit(0)
