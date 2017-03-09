@@ -3,14 +3,14 @@
 import requests
 
 host = "tsdb-test"
-port = 4242
+port = 4243
 
 # 1451581200
 start_time = "2016/01/01-00:00:00"
 # 1459443600
 end_time = "2016/04/01-00:00:00"
 
-metric = "home.temperature"
+metric = "level"
 tag = "location=hatyai"
 
 # main
