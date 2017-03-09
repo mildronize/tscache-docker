@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -x
+
 tsdb_cli_path="./tsdb"
 service_name="tsdb-test"
 import_file="dps-1"
