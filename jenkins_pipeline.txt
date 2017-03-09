@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+    stages {
+        stage('docker build & up') {
+            steps {
+                git credentialsId: 'bbb430a1-2339-4fc6-bba5-e7c9a7261a7d', url: 'https://mildronize@bitbucket.org/mildronize/mycache-docker.git'
+                dir('opentsdb/test') {
+                    git branch: '2.3.0-with-cache', credentialsId: 'bbb430a1-2339-4fc6-bba5-e7c9a7261a7d', url: 'https://mildronize@bitbucket.org/mildronize/opentsdb.git'
+                    
+                }
+                stash includes: 'docker-compose.yml', name: 'docker-compose.yml'
+                
+                sh 'docker-compose --file docker-compose-test.yml build'
+                sh 'docker-compose --file docker-compose-test.yml up -d'
+                dir('opentsdb/test') {
+                    // copy file for build
+                    sh 'container_id=`docker-compose --file ../../docker-compose-test.yml ps -q tsdb-test` && docker cp . $container_id:/opt/opentsdb/opentsdb-2.3.0'
+                    // sh 'container_id=`docker-compose --file ../../docker-compose-test.yml ps -q tsdb-test` && echo $container_id'
+                    // Build opentsdb
+                    sh 'docker-compose --file ../../docker-compose-test.yml exec -T tsdb-test "/opt/opentsdb/opentsdb-2.3.0/build.sh"'
+                    // Run opentsdb
+                   
+                    // warm up hbase
+                    // sh 'sleep 30'
+                    
+                    // At telnet line, it should be run as `docker exec -it` mode, [docker-compose exec -T and docker exec -t doesn't work!]
+                    sh 'container_id=`docker-compose --file ../../docker-compose-test.yml ps -q tsdb-test` && docker exec -i $container_id /entrypoint.sh'
+                    sh 'container_id=`docker-compose --file ../../docker-compose-test.yml ps -q tsdb-test` && docker exec -d -i $container_id /opt/bin/start_opentsdb.sh'
+                    // sh 'docker-compose --file ../../docker-compose-test.yml exec -T tsdb-test /opt/bin/start_opentsdb.sh'
+                    // Attach Jenkins container into building network
+                    sh 'container_id=`docker-compose --file ../../docker-compose-test.yml ps -q tsdb-test`' + 
+                        '&& network_name=`docker inspect --format "{{ index .HostConfig.NetworkMode  }}" $container_id`' +
+                        '&& docker network connect $network_name jenkins'
+                }
+                
+            }
+        }
+        stage('test') {
+            steps {
+                sh 'chmod a+x test.sh && set -x  && ./test.sh'
+            }
+        }
+        stage('clean') {
+            steps{
+                unstash name: 'docker-compose.yml'
+                // Disconnect Jenkins container from building network
+                sh 'container_id=`docker-compose --file docker-compose-test.yml ps -q tsdb-test`' + 
+                    '&& network_name=`docker inspect --format "{{ index .HostConfig.NetworkMode  }}" $container_id`' +
+                    '&& docker network disconnect $network_name jenkins'
+                //sh 'docker-compose --file docker-compose-test.yml down'
+                //deleteDir()
+            }
+        }
+    }
+}
