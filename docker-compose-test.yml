@@ -33,6 +33,4 @@ services:
         HBASE_HOME: /opt/hbase
     volumes_from:
         - hbase_standalone
-    volumes: 
-        - ./opentsdb/test:/opt/opentsdb/opentsdb-2.3.0
     
