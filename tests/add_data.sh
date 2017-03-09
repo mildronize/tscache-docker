@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 $tsdb_cli_path="./tsdb"
-$service_name="tsdb-dev"
+$service_name="tsdb-test"
 $import_file="dps-1"
 
 $container_id=`docker-compose ps -q $service_name`
