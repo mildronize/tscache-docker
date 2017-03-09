@@ -3,7 +3,7 @@
 # Support only one zookeeper host
 
 set -eo pipefail
-# set -x # For debugging
+set -x # For debugging
 
 # Load Environment variables
 env_opentsdb_home="$TSDB_HOME"
