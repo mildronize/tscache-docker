@@ -3,7 +3,7 @@
 import requests
 
 host = "tsdb-test"
-port = 4243
+port = 4242
 
 # 1451581200
 start_time = "2016/01/01-00:00:00"
