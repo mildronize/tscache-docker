@@ -14,10 +14,12 @@ metric = "level"
 tag = "location=hatyai"
 
 # main
- 
+    
 query = "http://{}:{}/api/query?start={}&end={}&m=sum:{}".format(
     host, port, start_time, end_time, metric
 ) + "{" + tag + "}"
+
+print("Testing on " + query)
 
 r = requests.get(query)
 result = r.json()
