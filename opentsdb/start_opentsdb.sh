@@ -6,6 +6,7 @@ log_path="/var/log/opentsdb"
 tsd_log="tsd.log"
 created_table_log="created_table.log"
 
+mkdir -p $log_path
 
 if [ ! -e /opt/opentsdb_tables_created.txt ]; then
 	echo "creating tsdb tables"
