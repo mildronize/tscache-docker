@@ -1,21 +1,14 @@
 pipeline {
     agent any
     stages {
-        stage('pre-clean') {
-            steps {
-                sh 'container_id=`docker-compose --file docker-compose-test.yml ps -q tsdb-test`' + 
-                    '&& network_name=`docker inspect --format "{{ index .HostConfig.NetworkMode  }}" $container_id`' +
-                    '&& ( docker network disconnect $network_name jenkins || echo "jenkins has disconnnected" ) '
-                sh 'docker-compose --file docker-compose-test.yml down'
-                //deleteDir()
-            }
-            
-        }
         stage('docker build & up') {
             steps {
                 git credentialsId: 'bbb430a1-2339-4fc6-bba5-e7c9a7261a7d', url: 'https://mildronize@bitbucket.org/mildronize/mycache-docker.git'
                 dir('opentsdb/test') {
-                    git branch: '2.3.0-with-cache', credentialsId: 'bbb430a1-2339-4fc6-bba5-e7c9a7261a7d', url: 'https://mildronize@bitbucket.org/mildronize/opentsdb.git'
+                    git 'https://github.com/OpenTSDB/opentsdb.git'
+                    // sh 'git checkout tags/v2.3.0'
+                    sh 'git checkout tags/v2.3.0'
+
                 }
                 stash includes: 'docker-compose-test.yml', name: 'docker-compose-test.yml'
                 
@@ -24,12 +17,15 @@ pipeline {
                 dir('opentsdb/test') {
                     // copy file for build
                     sh 'container_id=`docker-compose --file ../../docker-compose-test.yml ps -q tsdb-test` && docker cp . $container_id:/opt/opentsdb/opentsdb-2.3.0'
+                    // sh 'container_id=`docker-compose --file ../../docker-compose-test.yml ps -q tsdb-test` && echo $container_id'
                     // Build opentsdb
                     sh 'docker-compose --file ../../docker-compose-test.yml exec -T tsdb-test "/opt/opentsdb/opentsdb-2.3.0/build.sh"'
                     // Run opentsdb
-                
+                   
+                    // warm up hbase
+                    // sh 'sleep 30'
+                    
                     // At telnet line, it should be run as `docker exec -it` mode, [docker-compose exec -T and docker exec -t doesn't work!]
-                    // waiting until hbase ready
                     sh 'container_id=`docker-compose --file ../../docker-compose-test.yml ps -q tsdb-test` && docker exec -i $container_id /entrypoint.sh'
                     sh 'container_id=`docker-compose --file ../../docker-compose-test.yml ps -q tsdb-test` && docker exec -d -i $container_id /opt/bin/start_opentsdb.sh'
                     // sh 'docker-compose --file ../../docker-compose-test.yml exec -T tsdb-test /opt/bin/start_opentsdb.sh'
@@ -45,13 +41,10 @@ pipeline {
         stage('test') {
             steps {
                 //sh 'chmod a+x test.sh && virtualenv .venv && . .venv/bin/activate && set -x  && pwd && ./test.sh'
-                sh 'chmod a+x tests/test_query.py tests/add_data.sh'
-                unstash name: 'docker-compose-test.yml'
-                // waiting until hbase ready
-                sh 'container_id=`docker-compose --file docker-compose-test.yml ps -q tsdb-test` && docker exec -i $container_id /entrypoint.sh'
-                sh 'tests/add_data.sh'
-                sh 'virtualenv .venv && . .venv/bin/activate && set -x  && pwd' +
+                sh 'chmod a+x test.sh && virtualenv .venv && . .venv/bin/activate && set -x  && pwd' +
                     '&& pip install -r tests/requirements.txt ' +
+                    '&& chmod a+x tests/test_query.py tests/add_data.sh' +
+                    '&& tests/add_data.sh' + 
                     '&& ( while true; do wget tsdb-test:4242 >/dev/null 2>&1; if [ "$?" -eq "0" ]; then break; fi; echo "Connection failed, try again..."; sleep 1; done; )' +
                     '&& tests/test_query.py'
             }
@@ -64,6 +57,7 @@ pipeline {
                     '&& network_name=`docker inspect --format "{{ index .HostConfig.NetworkMode  }}" $container_id`' +
                     '&& docker network disconnect $network_name jenkins'
                 sh 'docker-compose --file docker-compose-test.yml down'
+                deleteDir()
             }
         }
     }

@@ -1,0 +1,9 @@
+{
+    "remotePath": "/home/mildronize/gits/mycache-docker",
+    "host": "172.30.224.10",
+    "username": "mildronize",
+    "password": "sivp,kd#",
+    "protocol": "sftp",
+    "port": "22",
+    "uploadOnSave": false
+}
