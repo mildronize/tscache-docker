@@ -33,9 +33,9 @@ services:
   tsdb-dev:
     build:
       context: ./opentsdb
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.test
 
-    image: opentsdb:2.3-dev
+    image: opentsdb:2.3-test
     depends_on:
         - hbase_standalone
         - rabbit
@@ -56,12 +56,54 @@ services:
   rabbit:
     image: rabbitmq:3-alpine
 
-
   unison:  
       image: leighmcculloch/unison:latest  
       environment:  
-          - UNISON_WORKING_DIR=/home/dev/opentsdb-dev/opentsdb
+          - UNISON_WORKING_DIR=/opt/opentsdb/opentsdb-2.3.0
       volumes:
-          - /home/dev/opentsdb-dev/opentsdb
+          - /opt/opentsdb/opentsdb-2.3.0
       ports:  
           - "5000:5000"
+
+#   unison:  
+#       image: leighmcculloch/unison:latest  
+#       environment:  
+#           - UNISON_WORKING_DIR=/home/dev/opentsdb-dev/opentsdb
+#       volumes:
+#           - /home/dev/opentsdb-dev/opentsdb
+#       ports:  
+#           - "5000:5000"
+
+# tmp
+#   tsdb-run:
+#     build:
+#       context: ./opentsdb
+#       dockerfile: Dockerfile.test
+
+#     image: opentsdb:2.3-run
+#     depends_on:
+#         - hbase_standalone
+#         - rabbit
+#     ports:
+#         - 4242:4242
+#     expose:
+#         - 4242
+#     container_name: tsdb
+#     environment:
+#         TIMEZONE: Asia/Bangkok
+#         HBASE_ZOOKEEPER_QUORUM: hbase_standalone:2181
+#         HBASE_HOME: /opt/hbase
+#     volumes_from:
+#         - hbase_standalone
+#         - unison_2
+#     # volumes:
+#     #     - ./opentsdb/dev:/home/dev/opentsdb-dev
+
+#   unison_2:  
+#       image: leighmcculloch/unison:latest  
+#       environment:  
+#           - UNISON_WORKING_DIR=/opt/opentsdb/opentsdb-2.3.0
+#       volumes:
+#           - /opt/opentsdb/opentsdb-2.3.0
+#       ports:  
+#           - "5000:5000"

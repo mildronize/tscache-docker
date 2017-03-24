@@ -4,7 +4,65 @@
 - `java/Dockerfile`
 
 
-# Run TSDB for dev
+# Work with IntelliJ
+**System Requirements**
+- Windows
+- Docker toolbox with VirtualBox
+- [Unison](https://www.cis.upenn.edu/~bcpierce/unison/) file synchronizer, a command line tool for synchronizing into a container
+- Bash on git (Windows)
+
+**Prerequisite**
+
+- Start docker by `Docker Quickstart Terminal`  
+
+## Setup default batch for docker environment
+1. Open widows `Run/Debug Configurations`
+2. In left panel, go to `Defaults` > `Batch`
+3. Run `docker-machine env` to see what variables are needed to set, for example.
+
+```
+SET DOCKER_TLS_VERIFY=1
+SET DOCKER_HOST=tcp://192.168.99.100:2376
+SET DOCKER_CERT_PATH=C:\Users\mildronize\.docker\machine\machines\default
+SET DOCKER_MACHINE_NAME=default
+SET COMPOSE_CONVERT_WINDOWS_PATHS=true
+REM Run this command to configure your shell:
+REM     @FOR /f "tokens=*" %i IN ('docker-machine env') DO @%i
+```
+
+4. Go back to `Run/Debug Configurations` window
+5. Using the 5 variables following step 3: `DOCKER_TLS_VERIFY`, `DOCKER_HOST`, `DOCKER_CERT_PATH`, `DOCKER_MACHINE_NAME` and `COMPOSE_CONVERT_WINDOWS_PATHS` set them into `Environment variables`
+
+## A list of Batch
+- *- build.sh*: `docker exec tsdb bash -c "chmod 777 -R * && ./build.sh"`
+- *- build.sh pom.xml*: `exec tsdb bash -c "chmod 777 -R * && ./build.sh pom.xml"`
+- *- build-aux/create-src-dir-overlay.sh*: For copying all Java sources into path `src-main` and `src-test` in order to run test with Maven `docker exec tsdb ./build-aux/create-src-dir-overlay.sh`
+- *- Sync*: Using `unsion` command line for synchronizing between host files and docker container. Before using this batch, you should setup a data container following [unison on docker site](https://github.com/leighmcculloch/docker-unison) `bash -c "unison . socket://$(docker-machine ip):5000/ -follow 'Regex .*' -ignore 'Path .git' -ignore 'Path .idea' -auto -batch"`
+    - Use `bash` because it cannot run unison on windows with current path for synchronizing. 
+        - Work: `bash -c "unison ."`.
+        - Don't work: `unison .` (on `cmd`)
+    - Synchronize following socket with host and port of unison server. for example. `socket://$(docker-machine ip):5000/`
+    - `-follow` argument is set for copying the real file if the file is symbolic link
+    - `-ignore 'Path .git' -ignore 'Path .idea'` Ignore path with `.git` and `.idea`
+    - `-auto -batch` for automatically synchronizion, if some files are conflict, the files will be ignored. If there is any conflict, please run `unsion` manually by removing `-batch`. For example `bash -c "unison . socket://$(docker-machine ip):5000/ -follow 'Regex .*' -ignore 'Path .git' -ignore 'Path .idea' -auto`
+
+- *Waiting for hbase*: `docker exec -i tsdb /entrypoint.sh`
+- *Run TSDB*: `docker exec -d -i tsdb /opt/bin/start_opentsdb.sh`
+- *Clean*: For cleaning all built files in `.gitignores` `git clean -X -f`
+- *Build*: Before lauch:
+    - **- Sync**
+    - **- build.sh**
+    - **- Sync**
+- *Generate pom.xml*: Before lauch:
+    - **- Sync**
+    - **- build.sh pom.xml**
+    - **- Sync**
+- *Copy src to dir overlay*: Before lauch:
+    - **- Sync**
+    - **- build-aux/create-src-dir-overlay.sh**
+    - **- Sync**
+
+# Run TSDB for dev (old)
 ```
 # Build with the same `uid` and gid` of running host user into container
 # Read more
@@ -19,3 +77,5 @@ docker-compose up tsdb-dev
 docker exec -it -u root:root tsdb zsh
 docker exec -it -u dev:dev tsdb zsh
 ```
+
+

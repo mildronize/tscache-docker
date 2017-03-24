@@ -52,9 +52,17 @@ RUN set -x \
     && chown -R ${user}:${group} .
 
 
+ADD start_opentsdb.sh /opt/bin/
+ADD create_tsdb_tables.sh /opt/bin/
 ADD entrypoint.dev.sh /entrypoint.sh
 ADD entrypoint.sh /preparing_opentsdb.sh
 RUN chmod 755 /entrypoint.sh /preparing_opentsdb.sh
+
+# Don't work yet
+RUN sed -i "s#{{TSDB_VERSION}}#$TSDB_VERSION#g;" /opt/bin/start_opentsdb.sh && \
+    sed -i "s#{{TSDB_VERSION}}#$TSDB_VERSION#g;" /opt/bin/create_tsdb_tables.sh
+
+RUN update-alternatives --set java $JAVA_HOME/jre/bin/java
 
 ADD opentsdb.conf ${TSDB_HOME}
 
