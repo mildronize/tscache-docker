@@ -13,7 +13,11 @@
 
 **Prerequisite**
 
-- Start docker by `Docker Quickstart Terminal`  
+- Start docker by `Docker Quickstart Terminal` 
+
+## Read me first
+- ถ้าเอา opentsdb มารัน บน windows แก้ไฟล์ pom.xml.in ก่อน โดยแก้จาก `<executable>build-aux/gen_build_data.sh</executable>` เป็น `<executable>build-aux/gen_build_data.bat</executable>` เพราะว่า windows ไม่สามารถรันไฟล์ `sh` ได้ (ซึ่งในไฟล์นี้มีคำสั่ง `bash gen_build_data.sh` อยู่เพื่อแก้ปัญหานี้)
+- ถ้า build แล้วทำงานผิดพลาดให้ตรวจสอบ Path ให้ดี และมั่นใจว่าทุกครั้งก่อน build ต่างสภาพแวดล้อมนั้นให้ลบไฟล์ที่ถูก build ออกไปให้หมด โดยใช้ `git clean -X -f` ในการลบทุกอย่างที่อยู่ใน `.gitignore` ออกไป 
 
 ## Setup default batch for docker environment
 1. Open widows `Run/Debug Configurations`
@@ -36,7 +40,7 @@ REM     @FOR /f "tokens=*" %i IN ('docker-machine env') DO @%i
 ## A list of Batch
 - *- build.sh*: `docker exec tsdb bash -c "chmod 777 -R * && ./build.sh"`
 - *- build.sh pom.xml*: `exec tsdb bash -c "chmod 777 -R * && ./build.sh pom.xml"`
-- *- build-aux/create-src-dir-overlay.sh*: For copying all Java sources into path `src-main` and `src-test` in order to run test with Maven `docker exec tsdb ./build-aux/create-src-dir-overlay.sh`
+- *- build-aux/create-src-dir-overlay.sh*: For copying all Java sources into path `src-main` and `src-test` in order to run test with Maven `docker exec tsdb bash -c "./build-aux/create-src-dir-overlay.sh"`
 - *- Sync*: Using `unsion` command line for synchronizing between host files and docker container. Before using this batch, you should setup a data container following [unison on docker site](https://github.com/leighmcculloch/docker-unison) `bash -c "unison . socket://$(docker-machine ip):5000/ -follow 'Regex .*' -ignore 'Path .git' -ignore 'Path .idea' -auto -batch"`
     - Use `bash` because it cannot run unison on windows with current path for synchronizing. 
         - Work: `bash -c "unison ."`.
@@ -61,6 +65,14 @@ REM     @FOR /f "tokens=*" %i IN ('docker-machine env') DO @%i
     - **- Sync**
     - **- build-aux/create-src-dir-overlay.sh**
     - **- Sync**
+
+
+# Run TSDB for dev
+
+```
+docker-compose up -d tsdb-dev
+```
+
 
 # Run TSDB for dev (old)
 ```
