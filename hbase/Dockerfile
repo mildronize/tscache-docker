@@ -7,7 +7,7 @@ MAINTAINER Thada Wangthammang <mildronize@gmail.com>
 # Install HBase
 ENV HBASE_HOME /opt/hbase
 ENV HBASE_DATA /data/hbase
-ENV HBASE_VERSION 1.2.4
+ENV HBASE_VERSION 1.2.6
 
 RUN mkdir -p /data/hbase /opt/downloads
 WORKDIR /opt/downloads

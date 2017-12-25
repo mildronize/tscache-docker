@@ -2,7 +2,7 @@ version: '2'
 services:
   hbase_standalone:
     build: hbase/
-    image: hbase:1.2.4
+    image: hbase:1.2.6
     ports:
       - 2181:2181
       - 16000:16000
