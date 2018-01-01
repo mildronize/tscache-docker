@@ -38,7 +38,8 @@ services:
     image: opentsdb:2.3-test
     depends_on:
         - hbase_standalone
-        - rabbit
+        - memcached
+
     ports:
         - 4242:4242
     expose:
@@ -53,6 +54,13 @@ services:
         - unison
     # volumes:
     #     - ./opentsdb/dev:/home/dev/opentsdb-dev
+
+  memcached:
+    image: memcached:1.5-alpine
+    container_name: memcached
+    ports:
+      - 11211:11211
+
   rabbit:
     image: rabbitmq:3-alpine
     ports:

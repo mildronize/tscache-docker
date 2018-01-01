@@ -9,7 +9,7 @@ if [ -z "$type" ]; then
 fi
 
 service_name="tsdb-$type"
-import_file="dps-1"
+import_file="dps-location-narathiwat"
 
 tsdb_cli_path="build/tsdb"
 tsdb_path="/opt/opentsdb/opentsdb-2.3.0"
@@ -17,7 +17,7 @@ docker_compose_path="docker-compose-$type.yml"
 
 if [ "$type" == "dev" ]; then
     docker_compose_path="docker-compose.yml"
-    tsdb_path="/home/dev/opentsdb-dev/opentsdb"
+    tsdb_path="/opt/opentsdb/opentsdb-2.3.0"
 fi
 
 tsdb_full_path="$tsdb_path/$tsdb_cli_path"
