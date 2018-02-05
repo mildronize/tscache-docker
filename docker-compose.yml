@@ -60,6 +60,7 @@ services:
     container_name: memcached
     ports:
       - 11211:11211
+    command: memcached -vv
 
   rabbit:
     image: rabbitmq:3-alpine
