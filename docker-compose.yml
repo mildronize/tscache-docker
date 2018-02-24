@@ -67,7 +67,7 @@ services:
     volumes_from:
       - hbase_standalone
     volumes:
-      /opt/opentsdb/opentsdb-2.3.0:/home/mildronize/opentsdb
+      - /opt/opentsdb/opentsdb-2.3.0:/home/mildronize/opentsdb
 
   memcached:
     image: 'memcached:1.5-alpine'
