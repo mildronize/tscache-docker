@@ -1,10 +1,27 @@
 version: '2'
 services:
 
-  hbase_standalone:
+######### opentsdb service
+  opentsdb:
+    build:
+      context: ./opentsdb
+      dockerfile: Dockerfile.oraclejdk-8
+    image: opentsdb
+    depends_on:
+      - opentsdb_hbase_standalone
+    ports:
+      - '4242:4242'
+    container_name: opentsdb
+    environment:
+      TIMEZONE: Asia/Bangkok
+      HBASE_ZOOKEEPER_QUORUM: 'opentsdb_hbase_standalone:2181'
+    volumes_from:
+      - opentsdb_hbase_standalone
+
+  opentsdb_hbase_standalone:
     build:
       context: ./hbase
-      dockerfile: Dockerfile.oraclejdk8
+      dockerfile: Dockerfile.oraclejdk-8
     image: 'hbase:1.2.6'
     ports:
       - '2181:2181'
@@ -14,31 +31,17 @@ services:
       - '16301:16301'
     environment:
       TIMEZONE: Asia/Bangkok
-      HBASE_ZOOKEEPER_QUORUM: 'hbase_standalone:2181'
+      HBASE_ZOOKEEPER_QUORUM: 'opentsdb_hbase_standalone:2181'
 
-  opentsdb:
-    build:
-      context: ./opentsdb
-      dockerfile: Dockerfile.oraclejdk8
-    image: opentsdb
-    depends_on:
-      - hbase_standalone
-    ports:
-      - '4242:4242'
-    container_name: opentsdb
-    environment:
-      TIMEZONE: Asia/Bangkok
-      HBASE_ZOOKEEPER_QUORUM: 'hbase_standalone:2181'
-    volumes_from:
-      - hbase_standalone
-  
+######### tscache service
+
   tscache:
     build:
       context: ./opentsdb
       dockerfile: Dockerfile.oraclejdk-8.test
     image: 'opentsdb:2.3-tscache'
     depends_on:
-      - hbase_standalone
+      - tscache_hbase_standalone
       - memcached
     ports:
       - '4243:4242'
@@ -47,12 +50,28 @@ services:
     container_name: tscache
     environment:
       TIMEZONE: Asia/Bangkok
-      HBASE_ZOOKEEPER_QUORUM: 'hbase_standalone:2181'
+      HBASE_ZOOKEEPER_QUORUM: 'tscache_hbase_standalone:2181'
       HBASE_HOME: /opt/hbase
     volumes_from:
-      - hbase_standalone
+      - tscache_hbase_standalone
     volumes:
-      - /opt/opentsdb/opentsdb-2.3.0:/home/mildronize/opentsdb
+      - /home/mildronize/opentsdb:/opt/opentsdb/opentsdb-2.3.0
+
+
+  tscache_hbase_standalone:
+    build:
+      context: ./hbase
+      dockerfile: Dockerfile.oraclejdk-8
+    image: 'hbase:1.2.6'
+    ports:
+      - '2182:2181'
+      - '16001:16000'
+      - '16011:16010'
+      - '16202:16201'
+      - '16302:16301'
+    environment:
+      TIMEZONE: Asia/Bangkok
+      HBASE_ZOOKEEPER_QUORUM: 'tscache_hbase_standalone:2182'
 
   memcached:
     image: 'memcached:1.5-alpine'
