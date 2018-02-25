@@ -4,7 +4,7 @@ MAINTAINER Thada Wangthammang <mildronize@gmail.com>
 
 ENV HBASE_HOME      /opt/hbase
 
-ENV TSDB_VERSION    2.2.0
+ENV TSDB_VERSION    2.3.0
 ENV TSDB_HOME       /opt/opentsdb/
 
 ENV PATH            $PATH:${HBASE_HOME}/sbin:${HBASE_HOME}/bin:${TSDB_HOME}/opentsdb-${TSDB_VERSION}/build
