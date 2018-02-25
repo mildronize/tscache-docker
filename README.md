@@ -73,6 +73,15 @@ REM     @FOR /f "tokens=*" %i IN ('docker-machine env') DO @%i
 docker-compose up -d tsdb-dev
 ```
 
+# Run TSDB for experiment
+
+```
+# build java orcale-8
+docker build -t java:oraclejdk-8 java
+docker-compose --file docker-compose-exp.yml up -d opentsdb
+docker-compose --file docker-compose-exp.yml up -d tscache
+```
+
 
 # Run TSDB for dev (old)
 ```

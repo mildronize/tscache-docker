@@ -1,0 +1,62 @@
+version: '2'
+services:
+
+  hbase_standalone:
+    build:
+      context: ./hbase
+      dockerfile: Dockerfile.oraclejdk8
+    image: 'hbase:1.2.6'
+    ports:
+      - '2181:2181'
+      - '16000:16000'
+      - '16010:16010'
+      - '16201:16201'
+      - '16301:16301'
+    environment:
+      TIMEZONE: Asia/Bangkok
+      HBASE_ZOOKEEPER_QUORUM: 'hbase_standalone:2181'
+
+  opentsdb:
+    build:
+      context: ./opentsdb
+      dockerfile: Dockerfile.oraclejdk8
+    image: opentsdb
+    depends_on:
+      - hbase_standalone
+    ports:
+      - '4242:4242'
+    container_name: opentsdb
+    environment:
+      TIMEZONE: Asia/Bangkok
+      HBASE_ZOOKEEPER_QUORUM: 'hbase_standalone:2181'
+    volumes_from:
+      - hbase_standalone
+  
+  tscache:
+    build:
+      context: ./opentsdb
+      dockerfile: Dockerfile.oraclejdk-8.test
+    image: 'opentsdb:2.3-tscache'
+    depends_on:
+      - hbase_standalone
+      - memcached
+    ports:
+      - '4243:4242'
+    expose:
+      - 4243
+    container_name: tscache
+    environment:
+      TIMEZONE: Asia/Bangkok
+      HBASE_ZOOKEEPER_QUORUM: 'hbase_standalone:2181'
+      HBASE_HOME: /opt/hbase
+    volumes_from:
+      - hbase_standalone
+    volumes:
+      - /opt/opentsdb/opentsdb-2.3.0:/home/mildronize/opentsdb
+
+  memcached:
+    image: 'memcached:1.5-alpine'
+    ports:
+      - '11211:11211'
+    command: memcached -vv
+

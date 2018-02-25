@@ -1,6 +1,6 @@
 # Local oracle jdk 8 build
-#FROM java:oraclejdk-8
-FROM openjdk:8
+FROM java:oraclejdk-8
+# FROM openjdk:8
 
 MAINTAINER Thada Wangthammang <mildronize@gmail.com>
 

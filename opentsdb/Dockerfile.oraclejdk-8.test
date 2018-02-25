@@ -1,0 +1,37 @@
+# FROM java:oraclejdk-8
+FROM openjdk:8
+MAINTAINER Thada Wangthammang <mildronize@gmail.com>
+
+ENV HBASE_HOME      /opt/hbase
+
+ENV TSDB_VERSION    2.3.0
+ENV TSDB_HOME       /opt/opentsdb/
+
+ENV PATH            $PATH:${HBASE_HOME}/sbin:${HBASE_HOME}/bin:${TSDB_HOME}/opentsdb-${TSDB_VERSION}/build
+
+# install GNUplot and clean cache
+RUN \
+    apt-get update && \
+    apt-get install -y gnuplot unzip autoconf make python telnet && \
+    apt-get clean  && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p ${TSDB_HOME} ${HBASE_HOME}
+WORKDIR ${TSDB_HOME}
+
+ADD opentsdb.conf ${TSDB_HOME}
+
+ADD start_opentsdb.sh /opt/bin/
+ADD create_tsdb_tables.sh /opt/bin/
+ADD entrypoint.sh /
+RUN chmod 755 /entrypoint.sh /opt/bin/start_opentsdb.sh /opt/bin/create_tsdb_tables.sh
+
+RUN sed -i "s#{{TSDB_VERSION}}#$TSDB_VERSION#g;" /opt/bin/start_opentsdb.sh && \
+    sed -i "s#{{TSDB_VERSION}}#$TSDB_VERSION#g;" /opt/bin/create_tsdb_tables.sh
+
+# OpenTSDB GUI
+EXPOSE 4242
+
+WORKDIR ${TSDB_HOME}/opentsdb-${TSDB_VERSION}
+
+CMD ["bash", "-c", "sleep infinity"]
