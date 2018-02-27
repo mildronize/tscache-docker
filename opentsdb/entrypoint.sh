@@ -33,7 +33,7 @@ wait_for() {
     local port=${2?ERROR: A port is reqiured}
     local delay=${3:-2} # Default is 2 seconds
     while true; do
-        local telnet_count=`telnet $host $port | grep -v "Connection refused" | grep "Connected to" | grep -v grep | wc -l`
+        local telnet_count=`echo "exit" | telnet $host $port | grep -v "Connection refused" | grep "Connected to" | grep -v grep | wc -l`
         if [ $telnet_count -eq 1 ] ; then
             break
         else

@@ -39,6 +39,6 @@ RUN sed -i "s#{{TSDB_VERSION}}#$TSDB_VERSION#g;" /opt/bin/start_opentsdb.sh && \
 # OpenTSDB GUI
 EXPOSE 4242
 
-WORKDIR ${TSDB_HOME}
+WORKDIR ${TSDB_HOME}/opentsdb-${TSDB_VERSION}
 
 CMD ["/entrypoint.sh", "/opt/bin/start_opentsdb.sh"]

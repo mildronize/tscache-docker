@@ -50,7 +50,7 @@ services:
     container_name: tscache
     environment:
       TIMEZONE: Asia/Bangkok
-      HBASE_ZOOKEEPER_QUORUM: 'tscache_hbase_standalone:2181'
+      HBASE_ZOOKEEPER_QUORUM: 'tscache_hbase_standalone:2182'
       HBASE_HOME: /opt/hbase
     volumes_from:
       - tscache_hbase_standalone
