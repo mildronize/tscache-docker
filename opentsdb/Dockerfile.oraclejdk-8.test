@@ -1,5 +1,5 @@
-# FROM java:oraclejdk-8
-FROM openjdk:8
+FROM java:oraclejdk-8
+# FROM openjdk:8
 MAINTAINER Thada Wangthammang <mildronize@gmail.com>
 
 ENV HBASE_HOME      /opt/hbase
