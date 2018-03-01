@@ -1,37 +1,6 @@
 version: '2'
 services:
 
-######### opentsdb service
-  opentsdb:
-    build:
-      context: ./opentsdb
-      dockerfile: Dockerfile.oraclejdk-8
-    image: opentsdb
-    depends_on:
-      - opentsdb_hbase_standalone
-    ports:
-      - '4242:4242'
-    container_name: opentsdb
-    environment:
-      TIMEZONE: Asia/Bangkok
-      HBASE_ZOOKEEPER_QUORUM: 'opentsdb_hbase_standalone:2181'
-    volumes_from:
-      - opentsdb_hbase_standalone
-
-  opentsdb_hbase_standalone:
-    build:
-      context: ./hbase
-      dockerfile: Dockerfile.oraclejdk-8
-    image: 'hbase:1.2.6'
-    ports:
-      - '2181:2181'
-      - '16000:16000'
-      - '16010:16010'
-      - '16201:16201'
-      - '16301:16301'
-    environment:
-      TIMEZONE: Asia/Bangkok
-      HBASE_ZOOKEEPER_QUORUM: 'opentsdb_hbase_standalone:2181'
 
 ######### tscache service
 
