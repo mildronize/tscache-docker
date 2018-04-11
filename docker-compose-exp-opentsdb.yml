@@ -32,4 +32,6 @@ services:
     environment:
       TIMEZONE: Asia/Bangkok
       HBASE_ZOOKEEPER_QUORUM: 'opentsdb_hbase_standalone:2181'
+    volumes:
+      - /home/mildronize/hbase-opentsdb:/data/hbase
 
