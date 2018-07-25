@@ -14,7 +14,7 @@ WORKDIR /opt/downloads
 RUN \
     # wget -O hbase-${HBASE_VERSION}.bin.tar.gz http://www-us.apache.org/dist/hbase/${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz && \
 
-    wget -O hbase-${HBASE_VERSION}.bin.tar.gz http://www-us.apache.org/dist/hbase/stable/hbase-${HBASE_VERSION}-bin.tar.gz && \
+    wget -O hbase-${HBASE_VERSION}.bin.tar.gz https://archive.apache.org/dist/hbase/${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz && \
 
     tar xzvf hbase-${HBASE_VERSION}.bin.tar.gz && \
     mv hbase-${HBASE_VERSION} ${HBASE_HOME} && \

@@ -40,8 +40,8 @@ services:
     environment:
       TIMEZONE: Asia/Bangkok
       HBASE_ZOOKEEPER_QUORUM: 'tscache_hbase_standalone:2182'
-    volumes:
-      - /home/mildronize/hbase-tscache:/data/hbase
+    # volumes:
+      # - /home/mildronize/hbase-tscache:/data/hbase
 
   memcached:
     image: 'memcached:1.5-alpine'
